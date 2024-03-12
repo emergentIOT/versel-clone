@@ -11,7 +11,7 @@ var mime = require('mime-types')
 const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3')
 
 const S3Client = new S3Client({
-    region: '',
+    region: 'ap-southeast-2',
     credentials: {
         accessKeyId: '',
         secretAccessKey: ''
@@ -53,20 +53,21 @@ async function init() {
             /**
              * Project files to be uploaded in s3 : __outputs/{project_id}
              */
-
+            console.log('Uploading ...', filePath);
             /**
              * 
              * Dynamically evaulate the content type, as we are not sure about the clients codefile.
              *  - We will use a package for that : https://www.npmjs.com/package/mime-types
              */
             const command = new PutObjectCommand({
-                Bucket: '',
+                Bucket: 'versal-clone',
                 Key: `__output/${PROJECT_ID}/${filePath}`,
                 Body: fs.createReadStream(filePath),
                 ContentType: mime.lookup(filePath)
             })
 
             await S3Client.send(command);
+            console.log('Uploaded', filePath);
         }
 
         console.log("Uploading done to s3 bucket .")

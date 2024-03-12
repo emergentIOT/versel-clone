@@ -16,7 +16,17 @@ RUN apt-get install git -y
 
 WORKDIR /home/app
 
+#Copy files to dir
 COPY main.sh main.sh
+COPY script.js script.js
+COPY package*.json .
+
+#Install dependencies
+RUN npm install
+
+#Make below files executable
+RUN chmod +x main.sh
+RUN chmod +x script.js
 
 #ENTRYPOINT [ "executable" ], when container is up and running, 
 #below command will execute.
