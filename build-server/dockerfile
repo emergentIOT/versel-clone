@@ -1,0 +1,23 @@
+FROM ubuntu:focal
+
+#To update packages
+RUN apt-get update
+#To use api calls or packages
+RUN apt-get install -y curl
+
+#To setup nodejs
+RUN curl -sL https://deb.nodesource.com/setup_20.x | bash -
+RUN apt-get upgrade -y
+RUN apt-get install -y nodejs
+RUN apt-get install git -y
+
+#To setup git
+RUN apt-get install git -y
+
+WORKDIR /home/app
+
+COPY main.sh main.sh
+
+#ENTRYPOINT [ "executable" ], when container is up and running, 
+#below command will execute.
+ENTRYPOINT [ "/home/app/main.sh" ]
