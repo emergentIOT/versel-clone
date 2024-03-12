@@ -1,0 +1,23 @@
+{
+  "name": "build-server",
+  "version": "1.0.0",
+  "description": "Versel server to build and upload code to AWS s3",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/emergentIOT/versel-clone.git"
+  },
+  "author": "Amandeep singh",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/emergentIOT/versel-clone/issues"
+  },
+  "homepage": "https://github.com/emergentIOT/versel-clone#readme",
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.529.1",
+    "mime-types": "^2.1.35"
+  }
+}

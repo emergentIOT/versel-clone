@@ -6,6 +6,20 @@
 const { exec } = require('child_process');
 const path = require('path')
 const fs = require('fs')
+var mime = require('mime-types')
+
+const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3')
+
+const S3Client = new S3Client({
+    region: '',
+    credentials: {
+        accessKeyId: '',
+        secretAccessKey: ''
+    }
+});
+
+//Project files to be uploaded in s3 : __outputs/{project_id}
+const PROJECT_ID = process.env.PROJECT_ID;
 
 async function init() {
     console.log('Executing script.js');
@@ -22,9 +36,9 @@ async function init() {
         console.log("Build error",error.toString())
     })
 
-    p.stdout.on('close', function(close){
+    p.stdout.on('close', async function(close){
         console.log("Build complete",close.toString())
-        //Read dist folder
+        //Read dist folder as build is completed
         const distFolderPath = path.join(__dirname, 'output', 'dist');
         //Reading all files in the dis folder. 
         // {recursive:true} will get all the files inside the nester folders. 
@@ -36,6 +50,25 @@ async function init() {
             if(fs.lstatSync(filePath).isDirectory()) continue;
 
             //Upload to s3
+            /**
+             * Project files to be uploaded in s3 : __outputs/{project_id}
+             */
+
+            /**
+             * 
+             * Dynamically evaulate the content type, as we are not sure about the clients codefile.
+             *  - We will use a package for that : https://www.npmjs.com/package/mime-types
+             */
+            const command = new PutObjectCommand({
+                Bucket: '',
+                Key: `__output/${PROJECT_ID}/${filePath}`,
+                Body: fs.createReadStream(filePath),
+                ContentType: mime.lookup(filePath)
+            })
+
+            await S3Client.send(command);
         }
+
+        console.log("Uploading done to s3 bucket .")
     })
 }
