@@ -10,7 +10,7 @@ var mime = require('mime-types')
 
 const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3')
 
-const S3Client = new S3Client({
+const S3 = new S3Client({
     region: 'ap-southeast-2',
     credentials: {
         accessKeyId: '',
@@ -43,9 +43,10 @@ async function init() {
         //Reading all files in the dis folder. 
         // {recursive:true} will get all the files inside the nester folders. 
         // whenever we have upload on s3 we need to give file path not folder name.
-        const distFolderContents = fs.readFileSync(distFolderPath, { recursive: true });
+        const distFolderContents = fs.readdirSync(distFolderPath, { recursive: true });
 
-        for (const filePath of distFolderContents) {
+        for (const file of distFolderContents) {
+            const filePath = path.join(distFolderPath, file);
             //check for folder, if it is then we ll ignore it
             if(fs.lstatSync(filePath).isDirectory()) continue;
 
@@ -66,10 +67,12 @@ async function init() {
                 ContentType: mime.lookup(filePath)
             })
 
-            await S3Client.send(command);
+            await S3.send(command);
             console.log('Uploaded', filePath);
         }
 
         console.log("Uploading done to s3 bucket .")
     })
 }
+
+init()
